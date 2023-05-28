@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<resources>
+    <Resource id="jdbc/postgres" type="javax.sql.DataSource">
+        JdbcDriver = org.postgresql.Driver
+        JdbcUrl   = jdbc:postgresql://mel.db.elephantsql.com:5432/qkefukpg
+        UserName  = qkefukpg
+        Password  = 0hMPD_3y8vJo9D6NlUbX5GfgiHTqd3pk
+        JtaManaged = false
+        initialSize = 2
+        maxActive = 2
+        maxIdle = 1
+        minIdle = 1
+    </Resource>
+</resources>
