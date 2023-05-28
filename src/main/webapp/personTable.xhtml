@@ -12,148 +12,106 @@
 
 <ui:composition template="/templates/masterTemplate.xhtml">
     <ui:define name="content">
-        <h:form>
-<!--            <p:growl id="messages" showDetail="true" />-->
+        <div>
+            <h:form>
 
-<!--            <p:toolbar>-->
-<!--                <p:toolbarGroup>-->
-<!--&lt;!&ndash;                    <p:commandButton value="New" icon="pi pi-plus" actionListener="#{personBean.createNew}"&ndash;&gt;-->
-<!--&lt;!&ndash;                                     update=":dialogs:new-person-content" oncomplete="PF('newPersonDialog').show()"&ndash;&gt;-->
-<!--&lt;!&ndash;                                     styleClass="ui-button-success" style="margin-right: .5rem">&ndash;&gt;-->
-<!--&lt;!&ndash;                        <p:resetInput target=":dialogs:new-person-content" />&ndash;&gt;-->
-<!--&lt;!&ndash;                    </p:commandButton>&ndash;&gt;-->
-<!--&lt;!&ndash;                    <p:commandButton id="delete-products-button" value="#{personBean.deleteButtonMessage}"&ndash;&gt;-->
-<!--&lt;!&ndash;                                     icon="pi pi-trash" actionListener="#{personBean.deleteSelectedProducts}"&ndash;&gt;-->
-<!--&lt;!&ndash;                                     styleClass="ui-button-danger" disabled="#{!personBean.hasSelectedProducts()}" update="@this">&ndash;&gt;-->
-<!--&lt;!&ndash;                        <p:confirm header="Confirmation" message="Delete the selected products?"&ndash;&gt;-->
-<!--&lt;!&ndash;                                   icon="pi pi-exclamation-triangle" />&ndash;&gt;-->
-<!--&lt;!&ndash;                    </p:commandButton>&ndash;&gt;-->
-<!--                </p:toolbarGroup>-->
-<!--            </p:toolbar>-->
+                <p:toolbar>
+                    <p:toolbarGroup>
+                        <p:commandButton value="New" icon="pi pi-plus" onclick="PF('newPersonDialog').show()"
+                                         styleClass="ui-button-success" style="margin-right: .5rem"/>
+                    </p:toolbarGroup>
+                </p:toolbar>
 
-            <p:dataTable value="#{personBean.persons}" var="person" rows="10"
-                         paginator="true" paginatorPosition="bottom"
-                         paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
-                         currentPageReportTemplate="{startRecord}-{endRecord} of {totalRecords} records"
-                         rowsPerPageTemplate="5,10,{ShowAll|'All'}"
-                         allowUnsorting="true" sortMode="single"
-                         emptyMessage="No customers found with given criteria"
-                         filteredValue="#{personBean.filteredPersons}"
-                         globalFilterOnly="#{personBean.globalFilterOnly}">
-                <f:facet name="header">
-                    <div>
-                        <span>#{msg.TitlePersonCRUD}</span>
+                <p:dataTable value="#{personBean.persons}" var="person" rows="10"
+                             paginator="true" paginatorPosition="bottom"
+                             paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                             currentPageReportTemplate="{startRecord}-{endRecord} of {totalRecords} records"
+                             rowsPerPageTemplate="5,10,{ShowAll|'All'}"
+                             allowUnsorting="true" sortMode="single"
+                             emptyMessage="No customers found with given criteria"
+                             filteredValue="#{personBean.filteredPersons}"
+                             globalFilterOnly="#{personBean.globalFilterOnly}">
+                    <f:facet name="header">
                         <div>
-                            <p:inputText id="globalFilter" onkeyup="PF('customersTable').filter()" style="width:10rem"
-                                         placeholder="Enter keyword" />
-                            <p:commandButton value="Global Filter Only" update="@form" styleClass="ml-2"
-                                             action="#{personBean.toggleGlobalFilter()}"/>
+                            <span>#{msg.TitlePersonCRUD}</span>
+                            <div>
+                                <p:inputText id="globalFilter" onkeyup="PF('customersTable').filter()" style="width:10rem"
+                                             placeholder="Enter keyword" />
+                                <p:commandButton value="Global Filter Only" update="@form" styleClass="ml-2"
+                                                 action="#{personBean.toggleGlobalFilter()}"/>
+                            </div>
                         </div>
+                    </f:facet>
+                    <p:column headerText="#{msg.Lastname}" sortBy="#{person.lname}" filterBy="#{person.lname}" filterMatchMode="contains">
+                        <h:outputText value="#{person.lname}" />
+                    </p:column>
+                    <p:column headerText="#{msg.Firstname}" sortBy="#{person.fname}" filterBy="#{person.fname}" filterMatchMode="contains">
+                        <h:outputText value="#{person.fname}" />
+                    </p:column>
+                    <p:column headerText="#{msg.Email}" sortBy="#{person.email}" filterBy="#{person.email}" filterMatchMode="contains">
+                        <h:outputText value="#{person.email}" />
+                    </p:column>
+    <!--                <p:column headerText="#{msg.actionFormList}">-->
+    <!--                    <p:commandLink action="#{personBean.selectPerson(person)}" styleClass="view-button">-->
+    <!--                        <i class="pi pi-search" style="font-size: 16px;"></i>-->
+    <!--                    </p:commandLink>-->
+
+    <!--                    <p:commandLink action="#{personBean.updPerson(person)}" styleClass="edit-button">-->
+    <!--                        <i class="pi pi-pencil" style="font-size: 16px;"></i>-->
+    <!--                    </p:commandLink>-->
+
+    <!--                    <p:commandLink action="#{personBean.delPerson(person)}" styleClass="delete-button">-->
+    <!--                        <i class="pi pi-trash" style="font-size: 16px;"></i>-->
+    <!--                    </p:commandLink>-->
+    <!--                </p:column>-->
+                </p:dataTable>
+            </h:form>
+
+            <h:form id="dialogs">
+
+                <p:dialog header="Person" showEffect="fade" modal="true" widgetVar="newPersonDialog"
+                          responsive="true">
+                    <div class="field">
+                        <p:outputLabel for="fname">First Name:</p:outputLabel>
+                        <p:inputText id="fname" value="#{personBean.person.fname}" required="true" />
                     </div>
-                </f:facet>
-                <p:column headerText="#{msg.Lastname}" sortBy="#{person.lname}" filterBy="#{person.lname}" filterMatchMode="contains">
-                    <h:outputText value="#{person.lname}" />
-                </p:column>
-                <p:column headerText="#{msg.Firstname}" sortBy="#{person.fname}" filterBy="#{person.fname}" filterMatchMode="contains">
-                    <h:outputText value="#{person.fname}" />
-                </p:column>
-                <p:column headerText="#{msg.Email}" sortBy="#{person.email}" filterBy="#{person.email}" filterMatchMode="contains">
-                    <h:outputText value="#{person.email}" />
-                </p:column>
-<!--                <p:column headerText="#{msg.actionFormList}">-->
-<!--                    <p:commandLink action="#{personBean.selectPerson(person)}" styleClass="view-button">-->
-<!--                        <i class="pi pi-search" style="font-size: 16px;"></i>-->
-<!--                    </p:commandLink>-->
 
-<!--                    <p:commandLink action="#{personBean.updPerson(person)}" styleClass="edit-button">-->
-<!--                        <i class="pi pi-pencil" style="font-size: 16px;"></i>-->
-<!--                    </p:commandLink>-->
+                    <div class="field">
+                        <p:outputLabel for="lname">Last Name:</p:outputLabel>
+                        <p:inputText id="lname" value="#{personBean.person.lname}" required="true" />
+                    </div>
 
-<!--                    <p:commandLink action="#{personBean.delPerson(person)}" styleClass="delete-button">-->
-<!--                        <i class="pi pi-trash" style="font-size: 16px;"></i>-->
-<!--                    </p:commandLink>-->
-<!--                </p:column>-->
-            </p:dataTable>
-        </h:form>
+                    <div class="field">
+                        <p:outputLabel for="sex">Sex:</p:outputLabel>
+                        <p:selectOneRadio id="sex" value="#{personBean.person.sex}"
+                                          layout="responsive" columns="2">
+                            <f:selectItem itemLabel="Male" itemValue="Male" />
+                            <f:selectItem itemLabel="Female" itemValue="Female" />
+                        </p:selectOneRadio>
+                    </div>
 
-<!--        <h:form id="dialogs">-->
-<!--            <p:dialog header="Person" showEffect="fade" modal="true" widgetVar="newPersonDialog"-->
-<!--                      responsive="true">-->
-<!--                <p:outputPanel id="new-person-content" class="ui-fluid">-->
-<!--                    <p:outputPanel rendered="#{not empty personBean.person}">-->
+                    <div class="field">
+                        <p:outputLabel for="city">City:</p:outputLabel>
+                        <p:inputText id="city" value="#{personBean.person.city}" required="true" />
+                    </div>
 
-<!--                        <div class="field">-->
-<!--                            <p:outputLabel for="fname">First Name</p:outputLabel>-->
-<!--                            <p:inputText id="fname" value="#{personBean.person.fname}" required="true" />-->
-<!--                        </div>-->
+                    <div class="field">
+                        <p:outputLabel for="email">E-mail:</p:outputLabel>
+                        <p:inputText id="email" value="#{personBean.person.email}" required="true">
+                            <f:validateRegex pattern=".*_@__\..*"/>
+                        </p:inputText>
+                    </div>
 
-<!--                        <div class="field">-->
-<!--                            <p:outputLabel for="lname">Last Name</p:outputLabel>-->
-<!--                            <p:inputText id="lname" value="#{personBean.person.lname}" required="true" />-->
-<!--                        </div>-->
+                    <div class="field">
+                        <p:outputLabel for="tel">Telephone:</p:outputLabel>
+                        <p:inputText id="tel" value="#{personBean.person.tel}" required="true">
+                            <f:validateRegex pattern="^[0-9]{9}$"/>
+                        </p:inputText>
+                    </div>
+                </p:dialog>
 
-<!--                        <div class="field">-->
-<!--                            <p:outputLabel for="category">Sex:</p:outputLabel>-->
-<!--                            <p:selectOneRadio id="category" value="#{personBean.person.sex}"-->
-<!--                                              layout="responsive" columns="2">-->
-<!--                                <f:selectItem itemLabel="Male" itemValue="Male" />-->
-<!--                                <f:selectItem itemLabel="Female" itemValue="Female" />-->
-<!--                            </p:selectOneRadio>-->
-<!--                        </div>-->
-
-<!--                        <div class="field">-->
-<!--                            <p:outputLabel for="city">City</p:outputLabel>-->
-<!--                            <p:inputText id="city" value="#{personBean.person.city}" required="true" />-->
-<!--                        </div>-->
-
-<!--                        <div class="field">-->
-<!--                            <p:outputLabel for="email">E-mail</p:outputLabel>-->
-<!--                            <p:inputText id="email" value="#{personBean.person.email}" required="true">-->
-<!--                                <f:validateRegex pattern=".*_@__\..*"/>-->
-<!--                            </p:inputText>-->
-<!--                        </div>-->
-
-<!--                        <div class="field">-->
-<!--                            <p:outputLabel for="tel">Telephone</p:outputLabel>-->
-<!--                            <p:inputText id="tel" value="#{personBean.person.tel}" required="true">-->
-<!--                                <f:validateRegex pattern="^[0-9]{9}$"/>-->
-<!--                            </p:inputText>-->
-<!--                        </div>-->
-
-<!--                        <f:facet name="footer">-->
-<!--                            <p:commandButton value="Save" icon="pi pi-check" actionListener="#{personBean.saveProduct}"-->
-<!--                                             update="manage-product-content" process="manage-product-content @this" />-->
-<!--                            <p:commandButton value="Cancel" icon="pi pi-times" onclick="PF('manageProductDialog').hide()"-->
-<!--                                             class="ui-button-secondary" type="button" />-->
-<!--                        </f:facet>-->
-
-<!--                    </p:outputPanel>-->
-<!--                </p:outputPanel>-->
-
-<!--                <f:facet name="footer">-->
-<!--                    <p:commandButton value="Save" icon="pi pi-check" actionListener="#{crudView.saveProduct}"-->
-<!--                                     update="manage-product-content" process="manage-product-content @this" />-->
-<!--                    <p:commandButton value="Cancel" icon="pi pi-times" onclick="PF('manageProductDialog').hide()"-->
-<!--                                     class="ui-button-secondary" type="button" />-->
-<!--                </f:facet>-->
-<!--            </p:dialog>-->
-
-
-<!--&lt;!&ndash;            <p:confirmDialog widgetVar="deleteProductDialog" showEffect="fade" width="300"&ndash;&gt;-->
-<!--&lt;!&ndash;                             message="Delete the product?" header="Confirm" severity="warn">&ndash;&gt;-->
-<!--&lt;!&ndash;                <p:commandButton value="Yes" icon="pi pi-check" actionListener="#{crudView.deleteProduct}"&ndash;&gt;-->
-<!--&lt;!&ndash;                                 process="@this" update=":form:delete-products-button"&ndash;&gt;-->
-<!--&lt;!&ndash;                                 oncomplete="PF('deleteProductDialog').hide()" />&ndash;&gt;-->
-<!--&lt;!&ndash;                <p:commandButton value="No" type="button" styleClass="ui-button-secondary" icon="pi pi-times"&ndash;&gt;-->
-<!--&lt;!&ndash;                                 onclick="PF('deleteProductDialog').hide()" />&ndash;&gt;-->
-<!--&lt;!&ndash;            </p:confirmDialog>&ndash;&gt;-->
-
-<!--&lt;!&ndash;            <p:confirmDialog global="true" showEffect="fade" width="300">&ndash;&gt;-->
-<!--&lt;!&ndash;                <p:commandButton value="Yes" type="button" styleClass="ui-confirmdialog-yes" icon="pi pi-check" />&ndash;&gt;-->
-<!--&lt;!&ndash;                <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no ui-button-secondary"&ndash;&gt;-->
-<!--&lt;!&ndash;                                 icon="pi pi-times" />&ndash;&gt;-->
-<!--&lt;!&ndash;            </p:confirmDialog>&ndash;&gt;-->
-<!--        </h:form>-->
+            </h:form>
+        </div>
     </ui:define>
 </ui:composition>
 

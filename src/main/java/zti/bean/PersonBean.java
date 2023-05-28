@@ -63,5 +63,6 @@ public class PersonBean implements Serializable {
     public void savePerson()
     {
         personDao.save(person);
+        persons.add(person);
     }
 }
