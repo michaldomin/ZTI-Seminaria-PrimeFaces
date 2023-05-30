@@ -32,9 +32,6 @@ public class PersonBean implements Serializable {
 
     private PersonDao personDao;
 
-    @Getter @Setter
-    private boolean globalFilterOnly;
-
     @PostConstruct
     public void init() {
         person = new Person();
@@ -51,9 +48,6 @@ public class PersonBean implements Serializable {
         return customer.getLname().toLowerCase().contains(filterText)
                 || customer.getFname().toLowerCase().contains(filterText)
                 || customer.getEmail().toLowerCase().contains(filterText);
-    }
-    public void toggleGlobalFilter() {
-        setGlobalFilterOnly(!isGlobalFilterOnly());
     }
 
     public void createNew()
@@ -88,6 +82,6 @@ public class PersonBean implements Serializable {
         this.selectedPersons = null;
         FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Persons Removed"));
         PrimeFaces.current().ajax().update("form:messages", "form:dt-persons");
-        PrimeFaces.current().executeScript("PF('dt-persons').clearFilters()");
+        PrimeFaces.current().executeScript("PF('dtPersons').clearFilters()");
     }
 }

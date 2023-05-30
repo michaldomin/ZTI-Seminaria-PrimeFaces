@@ -31,7 +31,7 @@
                     </p:toolbarGroup>
                 </p:toolbar>
 
-                <p:dataTable id="dt-persons" value="#{personBean.persons}" var="person" rows="10"
+                <p:dataTable id="dt-persons" widgetVar="dtPersons" value="#{personBean.persons}" var="person" rows="10"
                              paginator="true" paginatorPosition="bottom"
                              paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                              currentPageReportTemplate="{startRecord}-{endRecord} of {totalRecords} records"
@@ -39,16 +39,13 @@
                              allowUnsorting="true" sortMode="single"
                              emptyMessage="No customers found with given criteria"
                              filteredValue="#{personBean.filteredPersons}"
-                             globalFilterOnly="#{personBean.globalFilterOnly}">
+                             selection="#{personBean.selectedPersons}" rowKey="#{person.id}" rowSelectMode="add">
                     <f:facet name="header">
                         <div>
-                            <span>#{msg.TitlePersonCRUD}</span>
-                            <div>
-                                <p:inputText id="globalFilter" onkeyup="PF('customersTable').filter()" style="width:10rem"
-                                             placeholder="Enter keyword" />
-                                <p:commandButton value="Global Filter Only" update="@form" styleClass="ml-2"
-                                                 action="#{personBean.toggleGlobalFilter()}"/>
-                            </div>
+                            <span style="font-weight: bold">#{msg.TitlePersonCRUD}</span>
+                            <span> <i class="pi pi-search"></i>
+                                <p:inputText id="globalFilter" onkeyup="PF('dtPersons').filter()" placeholder="Search" />
+                            </span>
                         </div>
                     </f:facet>
 
@@ -58,7 +55,7 @@
                     <p:ajax event="rowUnselectCheckbox" update=":form:delete-person-button" />
                     <p:ajax event="toggleSelect" update=":form:delete-person-button" />
 
-<!--                    <p:column selectionMode="multiple" exportable="false"></p:column>-->
+                    <p:column selectionMode="multiple" exportable="false"></p:column>
 
                     <p:column headerText="#{msg.Lastname}" sortBy="#{person.lname}" filterBy="#{person.lname}" filterMatchMode="contains">
                         <h:outputText value="#{person.lname}" />
@@ -138,6 +135,11 @@
                     </f:facet>
                 </p:dialog>
 
+                <p:confirmDialog global="true" showEffect="fade" width="300">
+                    <p:commandButton value="Yes" type="button" styleClass="ui-confirmdialog-yes" icon="pi pi-check" />
+                    <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no ui-button-secondary"
+                                     icon="pi pi-times" />
+                </p:confirmDialog>
             </h:form>
         </div>
     </ui:define>
