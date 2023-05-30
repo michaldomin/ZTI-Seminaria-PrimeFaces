@@ -18,13 +18,6 @@ public class PersonDao {
     private EntityManagerFactory emf = Persistence.createEntityManagerFactory("PU_Postgresql");
     private EntityManager em = emf.createEntityManager();
 
-    public Person save(Person person) {
-        em.getTransaction().begin();
-        em.persist(person);
-        em.getTransaction().commit();
-        return person;
-    }
-
     public List<Person> findAll() {
         TypedQuery<Person> query = em.createNamedQuery("findAll", Person.class);
         return query.getResultList();

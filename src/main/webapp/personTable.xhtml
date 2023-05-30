@@ -13,16 +13,25 @@
 <ui:composition template="/templates/masterTemplate.xhtml">
     <ui:define name="content">
         <div>
-            <h:form>
+            <h:form id="form">
 
                 <p:toolbar>
                     <p:toolbarGroup>
-                        <p:commandButton value="New" icon="pi pi-plus" onclick="PF('newPersonDialog').show()"
-                                         styleClass="ui-button-success" style="margin-right: .5rem"/>
+                        <p:commandButton value="New" icon="pi pi-plus" actionListener="#{personBean.createNew}"
+                                         update=":dialogs:manage-person-content" oncomplete=" PF('newPersonDialog').show()"
+                                         styleClass="ui-button-success" style="margin-right: .5rem">
+                            <p:resetInput target=":dialogs:manage-person-content" />
+                        </p:commandButton>
+                        <p:commandButton id="delete-person-button" value="#{personBean.deleteButtonMessage}"
+                                         icon="pi pi-trash" actionListener="#{personBean.deleteSelectedPersons}"
+                                         styleClass="ui-button-danger" disabled="#{!personBean.hasSelectedPersons()}" update="@this">
+                            <p:confirm header="Confirmation" message="Delete the selected persons?"
+                                       icon="pi pi-exclamation-triangle" />
+                        </p:commandButton>
                     </p:toolbarGroup>
                 </p:toolbar>
 
-                <p:dataTable value="#{personBean.persons}" var="person" rows="10"
+                <p:dataTable id="dt-persons" value="#{personBean.persons}" var="person" rows="10"
                              paginator="true" paginatorPosition="bottom"
                              paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                              currentPageReportTemplate="{startRecord}-{endRecord} of {totalRecords} records"
@@ -42,6 +51,15 @@
                             </div>
                         </div>
                     </f:facet>
+
+                    <p:ajax event="rowSelect" update=":form:delete-person-button" />
+                    <p:ajax event="rowUnselect" update=":form:delete-person-button" />
+                    <p:ajax event="rowSelectCheckbox" update=":form:delete-person-button" />
+                    <p:ajax event="rowUnselectCheckbox" update=":form:delete-person-button" />
+                    <p:ajax event="toggleSelect" update=":form:delete-person-button" />
+
+<!--                    <p:column selectionMode="multiple" exportable="false"></p:column>-->
+
                     <p:column headerText="#{msg.Lastname}" sortBy="#{person.lname}" filterBy="#{person.lname}" filterMatchMode="contains">
                         <h:outputText value="#{person.lname}" />
                     </p:column>
@@ -69,45 +87,55 @@
 
             <h:form id="dialogs">
 
-                <p:dialog header="Person" showEffect="fade" modal="true" widgetVar="newPersonDialog"
-                          responsive="true">
-                    <div class="field">
-                        <p:outputLabel for="fname">First Name:</p:outputLabel>
-                        <p:inputText id="fname" value="#{personBean.person.fname}" required="true" />
-                    </div>
+                <p:dialog header="Person" showEffect="fade" modal="true" widgetVar="newPersonDialog" responsive="true">
+                    <p:outputPanel id="manage-person-content" class="ui-fluid">
+                        <p:outputPanel rendered="#{not empty personBean.person}">
+                            <div class="field">
+                                <p:outputLabel for="fname">First Name:</p:outputLabel>
+                                <p:inputText id="fname" value="#{personBean.person.fname}" required="true" />
+                            </div>
 
-                    <div class="field">
-                        <p:outputLabel for="lname">Last Name:</p:outputLabel>
-                        <p:inputText id="lname" value="#{personBean.person.lname}" required="true" />
-                    </div>
+                            <div class="field">
+                                <p:outputLabel for="lname">Last Name:</p:outputLabel>
+                                <p:inputText id="lname" value="#{personBean.person.lname}" required="true" />
+                            </div>
 
-                    <div class="field">
-                        <p:outputLabel for="sex">Sex:</p:outputLabel>
-                        <p:selectOneRadio id="sex" value="#{personBean.person.sex}"
-                                          layout="responsive" columns="2">
-                            <f:selectItem itemLabel="Male" itemValue="Male" />
-                            <f:selectItem itemLabel="Female" itemValue="Female" />
-                        </p:selectOneRadio>
-                    </div>
+                            <div class="field">
+                                <p:outputLabel for="sex">Sex:</p:outputLabel>
+                                <p:selectOneRadio id="sex" value="#{personBean.person.sex}"
+                                                  layout="responsive" columns="2">
+                                    <f:selectItem itemLabel="Male" itemValue="Male" />
+                                    <f:selectItem itemLabel="Female" itemValue="Female" />
+                                </p:selectOneRadio>
+                            </div>
 
-                    <div class="field">
-                        <p:outputLabel for="city">City:</p:outputLabel>
-                        <p:inputText id="city" value="#{personBean.person.city}" required="true" />
-                    </div>
+                            <div class="field">
+                                <p:outputLabel for="city">City:</p:outputLabel>
+                                <p:inputText id="city" value="#{personBean.person.city}" required="true" />
+                            </div>
 
-                    <div class="field">
-                        <p:outputLabel for="email">E-mail:</p:outputLabel>
-                        <p:inputText id="email" value="#{personBean.person.email}" required="true">
-                            <f:validateRegex pattern=".*_@__\..*"/>
-                        </p:inputText>
-                    </div>
+                            <div class="field">
+                                <p:outputLabel for="email">E-mail:</p:outputLabel>
+                                <p:inputText id="email" value="#{personBean.person.email}" required="true">
+                                    <f:validateRegex pattern=".*@.*\..*"/>
+                                </p:inputText>
+                            </div>
 
-                    <div class="field">
-                        <p:outputLabel for="tel">Telephone:</p:outputLabel>
-                        <p:inputText id="tel" value="#{personBean.person.tel}" required="true">
-                            <f:validateRegex pattern="^[0-9]{9}$"/>
-                        </p:inputText>
-                    </div>
+                            <div class="field">
+                                <p:outputLabel for="tel">Telephone:</p:outputLabel>
+                                <p:inputText id="tel" value="#{personBean.person.tel}" required="true">
+                                    <f:validateRegex pattern="^[0-9]{9}$"/>
+                                </p:inputText>
+                            </div>
+                        </p:outputPanel>
+                    </p:outputPanel>
+
+                    <f:facet name="footer">
+                        <p:commandButton value="Save" icon="pi pi-check" actionListener="#{personBean.savePerson}"
+                                         update=":form:dt-persons" process="manage-person-content @this" onclick="PF('newPersonDialog').hide()"/>
+                        <p:commandButton value="Cancel" icon="pi pi-times" onclick="PF('newPersonDialog').hide()"
+                                         class="ui-button-secondary" type="button" />
+                    </f:facet>
                 </p:dialog>
 
             </h:form>
