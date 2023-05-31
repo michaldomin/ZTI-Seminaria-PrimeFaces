@@ -61,6 +61,13 @@ public class PersonBean implements Serializable {
         personDao.update(person);
     }
 
+    public void deletePerson()
+    {
+        personDao.delete(person);
+        persons.remove(person);
+        PrimeFaces.current().ajax().update("form:dt-persons");
+    }
+
     public String getDeleteButtonMessage() {
         if (hasSelectedPersons()) {
             int size = this.selectedPersons.size();

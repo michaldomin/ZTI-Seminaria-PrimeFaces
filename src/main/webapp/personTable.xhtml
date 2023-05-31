@@ -18,7 +18,7 @@
                 <p:toolbar>
                     <p:toolbarGroup>
                         <p:commandButton value="New" icon="pi pi-plus" actionListener="#{personBean.createNew}"
-                                         update=":dialogs:manage-person-content" oncomplete=" PF('newPersonDialog').show()"
+                                         update=":dialogs:manage-person-content" oncomplete=" PF('managePersonDialog').show()"
                                          styleClass="ui-button-success" style="margin-right: .5rem">
                             <p:resetInput target=":dialogs:manage-person-content" />
                         </p:commandButton>
@@ -66,25 +66,30 @@
                     <p:column headerText="#{msg.Email}" sortBy="#{person.email}" filterBy="#{person.email}" filterMatchMode="contains">
                         <h:outputText value="#{person.email}" />
                     </p:column>
-    <!--                <p:column headerText="#{msg.actionFormList}">-->
-    <!--                    <p:commandLink action="#{personBean.selectPerson(person)}" styleClass="view-button">-->
-    <!--                        <i class="pi pi-search" style="font-size: 16px;"></i>-->
-    <!--                    </p:commandLink>-->
-
-    <!--                    <p:commandLink action="#{personBean.updPerson(person)}" styleClass="edit-button">-->
-    <!--                        <i class="pi pi-pencil" style="font-size: 16px;"></i>-->
-    <!--                    </p:commandLink>-->
-
-    <!--                    <p:commandLink action="#{personBean.delPerson(person)}" styleClass="delete-button">-->
-    <!--                        <i class="pi pi-trash" style="font-size: 16px;"></i>-->
-    <!--                    </p:commandLink>-->
-    <!--                </p:column>-->
+                    <p:column exportable="false">
+                        <p:commandButton update=":dialogs:personDetail" oncomplete="PF('personDialog').show()"
+                                         icon="pi pi-search" title="View">
+                            <f:setPropertyActionListener value="#{person}"
+                                                         target="#{personBean.person}"/>
+                        </p:commandButton>
+                        <p:commandButton icon="pi pi-pencil" update=":dialogs:manage-person-content"
+                                         oncomplete="PF('managePersonDialog').show()"
+                                         styleClass="edit-button rounded-button ui-button-success" process="@this">
+                            <f:setPropertyActionListener value="#{person}" target="#{personBean.person}" />
+                            <p:resetInput target=":dialogs:manage-person-content" />
+                        </p:commandButton>
+                        <p:commandButton class="ui-button-warning rounded-button" icon="pi pi-trash"
+                                         process="@this"
+                                         oncomplete="PF('deletePersonDialog').show()">
+                            <f:setPropertyActionListener value="#{person}" target="#{personBean.person}" />
+                        </p:commandButton>
+                    </p:column>
                 </p:dataTable>
             </h:form>
 
             <h:form id="dialogs">
 
-                <p:dialog header="Person" showEffect="fade" modal="true" widgetVar="newPersonDialog" responsive="true">
+                <p:dialog header="Person" showEffect="fade" modal="true" widgetVar="managePersonDialog" responsive="true">
                     <p:outputPanel id="manage-person-content" class="ui-fluid">
                         <p:outputPanel rendered="#{not empty personBean.person}">
                             <div class="field">
@@ -129,17 +134,51 @@
 
                     <f:facet name="footer">
                         <p:commandButton value="Save" icon="pi pi-check" actionListener="#{personBean.savePerson}"
-                                         update=":form:dt-persons" process="manage-person-content @this" onclick="PF('newPersonDialog').hide()"/>
-                        <p:commandButton value="Cancel" icon="pi pi-times" onclick="PF('newPersonDialog').hide()"
+                                         update=":form:dt-persons" process="manage-person-content @this" onclick="PF('managePersonDialog').hide()"/>
+                        <p:commandButton value="Cancel" icon="pi pi-times" onclick="PF('managePersonDialog').hide()"
                                          class="ui-button-secondary" type="button" />
                     </f:facet>
                 </p:dialog>
+
+                <p:confirmDialog widgetVar="deletePersonDialog" showEffect="fade" width="300"
+                                 message="Delete the person?" header="Confirm" severity="warn">
+                    <p:commandButton value="Yes" icon="pi pi-check" actionListener="#{personBean.deletePerson}"
+                                     process="@this" update=":form:delete-person-button"
+                                     oncomplete="PF('deletePersonDialog').hide()" />
+                    <p:commandButton value="No" type="button" styleClass="ui-button-secondary" icon="pi pi-times"
+                                     onclick="PF('deletePersonDialog').hide()" />
+                </p:confirmDialog>
 
                 <p:confirmDialog global="true" showEffect="fade" width="300">
                     <p:commandButton value="Yes" type="button" styleClass="ui-confirmdialog-yes" icon="pi pi-check" />
                     <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no ui-button-secondary"
                                      icon="pi pi-times" />
                 </p:confirmDialog>
+
+                <p:dialog header="Person Info" widgetVar="personDialog" modal="true" showEffect="fade"
+                          hideEffect="fade" resizable="false">
+                    <p:outputPanel id="personDetail" style="text-align:center;">
+                        <p:panelGrid columns="2" layout="grid" rendered="#{not empty personBean.person}">
+                            <h:outputText value="Name:"/>
+                            <h:outputText value="#{personBean.person.fname}"/>
+
+                            <h:outputText value="Surname:"/>
+                            <h:outputText value="#{personBean.person.lname}"/>
+
+                            <h:outputText value="Sex:"/>
+                            <h:outputText value="#{personBean.person.sex}"/>
+
+                            <h:outputText value="City:"/>
+                            <h:outputText value="#{personBean.person.city}"/>
+
+                            <h:outputText value="E-mail:"/>
+                            <h:outputText value="#{personBean.person.email}"/>
+
+                            <h:outputText value="Telephone:"/>
+                            <h:outputText value="#{personBean.person.tel}"/>
+                        </p:panelGrid>
+                    </p:outputPanel>
+                </p:dialog>
             </h:form>
         </div>
     </ui:define>
