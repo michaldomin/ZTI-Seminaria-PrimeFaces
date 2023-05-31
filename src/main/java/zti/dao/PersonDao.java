@@ -23,10 +23,6 @@ public class PersonDao {
         return query.getResultList();
     }
 
-    public Person findById(Integer id) {
-        return em.find(Person.class, id);
-    }
-
     public void update(Person person) {
         em.getTransaction().begin();
         em.merge(person);

@@ -39,26 +39,17 @@ public class PersonBean implements Serializable {
         persons = personDao.findAll();
     }
 
-    public boolean globalFilterFunction(Object value, Object filter) {
-        String filterText = (filter == null) ? null : filter.toString().trim().toLowerCase();
-        if (LangUtils.isBlank(filterText)) {
-            return true;
-        }
-        Person customer = (Person) value;
-        return customer.getLname().toLowerCase().contains(filterText)
-                || customer.getFname().toLowerCase().contains(filterText)
-                || customer.getEmail().toLowerCase().contains(filterText);
-    }
-
     public void createNew()
     {
-//        this.person = new Person();
-        this.person = persons.get(0);
+        this.person = new Person();
     }
 
     public void savePerson()
     {
         personDao.update(person);
+        if(person.getId()==null)
+            persons = personDao.findAll();
+        PrimeFaces.current().executeScript("PF('managePersonDialog').hide()");
     }
 
     public void deletePerson()

@@ -13,133 +13,214 @@
 <ui:composition template="/templates/masterTemplate.xhtml">
     <ui:define name="content">
         <div>
+            <!--Form z Tabelą-->
             <h:form id="form">
-
                 <p:toolbar>
                     <p:toolbarGroup>
+                        <!--Przycisk dodania nowej osoby-->
                         <p:commandButton value="New" icon="pi pi-plus" actionListener="#{personBean.createNew}"
                                          update=":dialogs:manage-person-content" oncomplete=" PF('managePersonDialog').show()"
-                                         styleClass="ui-button-success" style="margin-right: .5rem">
+                                         styleClass="ui-button-success">
                             <p:resetInput target=":dialogs:manage-person-content" />
                         </p:commandButton>
+                        <!--Przycisk usunięcia zaznczonych osób-->
                         <p:commandButton id="delete-person-button" value="#{personBean.deleteButtonMessage}"
                                          icon="pi pi-trash" actionListener="#{personBean.deleteSelectedPersons}"
-                                         styleClass="ui-button-danger" disabled="#{!personBean.hasSelectedPersons()}" update="@this">
+                                         disabled="#{!personBean.hasSelectedPersons()}" update="@this"
+                                         styleClass="ui-button-danger">
+                            <!--Confirm Dialog urzywający global Confirm Dialog-->
                             <p:confirm header="Confirmation" message="Delete the selected persons?"
                                        icon="pi pi-exclamation-triangle" />
                         </p:commandButton>
                     </p:toolbarGroup>
                 </p:toolbar>
 
-                <p:dataTable id="dt-persons" widgetVar="dtPersons" value="#{personBean.persons}" var="person" rows="10"
-                             paginator="true" paginatorPosition="bottom"
+                <!--Tabela wyświetlająca wszystkie osoby-->
+                <p:dataTable id="dt-persons" widgetVar="dtPersons" value="#{personBean.persons}" var="person"
+
+                             _comment1="Dodanie paginatora"
+                             paginator="true"
+
+                             _comment2="Konfiguracja paginatora"
+                             rows="10" paginatorPosition="bottom"
                              paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                              currentPageReportTemplate="{startRecord}-{endRecord} of {totalRecords} records"
                              rowsPerPageTemplate="5,10,{ShowAll|'All'}"
+
+                             _comment3="Konfiguracja sortowania"
                              allowUnsorting="true" sortMode="single"
+
+                             _comment4="Konfiguracja filtrowania"
                              emptyMessage="No customers found with given criteria"
                              filteredValue="#{personBean.filteredPersons}"
+
+                             _comment5="Konfiguracja zaznaczania"
                              selection="#{personBean.selectedPersons}" rowKey="#{person.id}" rowSelectMode="add">
+
+                    <!--Heder Tabeli-->
                     <f:facet name="header">
-                        <div>
-                            <span style="font-weight: bold">#{msg.TitlePersonCRUD}</span>
-                            <span> <i class="pi pi-search"></i>
-                                <p:inputText id="globalFilter" onkeyup="PF('dtPersons').filter()" placeholder="Search" />
-                            </span>
-                        </div>
+                        <p:toolbar>
+                            <p:toolbarGroup>
+                                <!--Tytuł Tabeli-->
+                                <span style="font-weight: bold">ZTI 2023, Semianria, PrimeFaces</span>
+                            </p:toolbarGroup>
+
+                            <p:toolbarGroup align="centre">
+                                <!--Dodanie Pole globalnego wyszukiwania-->
+                                <span class="filter-container ui-input-icon-left"> <i class="pi pi-search"></i>
+                                    <p:inputText id="globalFilter" onkeyup="PF('dtPersons').filter()" placeholder="Search" />
+                                </span>
+                            </p:toolbarGroup>
+
+                            <p:toolbarGroup align="right">
+                                <!--Dodanie toglera kolumn-->
+                                <p:commandButton id="toggler" type="button" value="Columns" icon="pi pi-align-justify"/>
+                                <p:columnToggler datasource="dt-persons" trigger="toggler">
+                                    <p:ajax />
+                                </p:columnToggler>
+                            </p:toolbarGroup>
+                        </p:toolbar>
                     </f:facet>
 
+                    <!--Dodanie eventów odświerzajączych wiadomość na przycisku usunięcia wielu przy zmianach zaznaczenia-->
                     <p:ajax event="rowSelect" update=":form:delete-person-button" />
                     <p:ajax event="rowUnselect" update=":form:delete-person-button" />
                     <p:ajax event="rowSelectCheckbox" update=":form:delete-person-button" />
                     <p:ajax event="rowUnselectCheckbox" update=":form:delete-person-button" />
                     <p:ajax event="toggleSelect" update=":form:delete-person-button" />
 
+                    <!--Kolumna z selektem-->
                     <p:column selectionMode="multiple" exportable="false"></p:column>
 
-                    <p:column headerText="#{msg.Lastname}" sortBy="#{person.lname}" filterBy="#{person.lname}" filterMatchMode="contains">
+                    <!--Kolumny-->
+                    <p:column headerText="Surname" sortBy="#{person.lname}" filterBy="#{person.lname}" filterMatchMode="contains">
                         <h:outputText value="#{person.lname}" />
                     </p:column>
-                    <p:column headerText="#{msg.Firstname}" sortBy="#{person.fname}" filterBy="#{person.fname}" filterMatchMode="contains">
+                    <p:column headerText="Name" sortBy="#{person.fname}" filterBy="#{person.fname}" filterMatchMode="contains">
                         <h:outputText value="#{person.fname}" />
                     </p:column>
-                    <p:column headerText="#{msg.Email}" sortBy="#{person.email}" filterBy="#{person.email}" filterMatchMode="contains">
+                    <p:column headerText="Sex" sortBy="#{person.sex}" filterBy="#{person.sex}" filterMatchMode="exact"  visible="false">
+                        <h:outputText value="#{person.sex}" />
+                    </p:column>
+                    <p:column headerText="City" sortBy="#{person.city}" filterBy="#{person.city}" filterMatchMode="exact"  visible="false">
+                        <h:outputText value="#{person.city}" />
+                    </p:column>
+                    <p:column headerText="E-mail" sortBy="#{person.email}" filterBy="#{person.email}" filterMatchMode="contains">
                         <h:outputText value="#{person.email}" />
                     </p:column>
+                    <p:column headerText="Telephone" sortBy="#{person.tel}" filterBy="#{person.tel}" filterMatchMode="exact"  visible="false">
+                        <h:outputText value="#{person.tel}" />
+                    </p:column>
+
+                    <!--Kolumna z akcjami na pojedynczych wierszach-->
                     <p:column exportable="false">
-                        <p:commandButton update=":dialogs:personDetail" oncomplete="PF('personDialog').show()"
-                                         icon="pi pi-search" title="View">
+
+                        <!--Widok wiersza-->
+                        <p:commandButton icon="pi pi-search" update=":dialogs:personDetail"
+                                         oncomplete="PF('personDialog').show()" title="View"
+                                         styleClass="rounded-button ui-button-info">
                             <f:setPropertyActionListener value="#{person}"
                                                          target="#{personBean.person}"/>
                         </p:commandButton>
+
+                        <!--Edycja wiersza-->
                         <p:commandButton icon="pi pi-pencil" update=":dialogs:manage-person-content"
-                                         oncomplete="PF('managePersonDialog').show()"
+                                         oncomplete="PF('managePersonDialog').show()" title="Edit"
                                          styleClass="edit-button rounded-button ui-button-success" process="@this">
                             <f:setPropertyActionListener value="#{person}" target="#{personBean.person}" />
                             <p:resetInput target=":dialogs:manage-person-content" />
                         </p:commandButton>
-                        <p:commandButton class="ui-button-warning rounded-button" icon="pi pi-trash"
-                                         process="@this"
-                                         oncomplete="PF('deletePersonDialog').show()">
+
+                        <!--Usunięcie wiersza-->
+                        <p:commandButton icon="pi pi-trash"
+                                         oncomplete="PF('deletePersonDialog').show()" title="Delete"
+                                         styleClass="ui-button-warning rounded-button" process="@this">
                             <f:setPropertyActionListener value="#{person}" target="#{personBean.person}" />
                         </p:commandButton>
+
                     </p:column>
                 </p:dataTable>
+
             </h:form>
 
+            <!--Form z dialogami-->
             <h:form id="dialogs">
 
+                <!--Dialog dodanai i edycji nowej osoby-->
                 <p:dialog header="Person" showEffect="fade" modal="true" widgetVar="managePersonDialog" responsive="true">
                     <p:outputPanel id="manage-person-content" class="ui-fluid">
                         <p:outputPanel rendered="#{not empty personBean.person}">
+
                             <div class="field">
                                 <p:outputLabel for="fname">First Name:</p:outputLabel>
-                                <p:inputText id="fname" value="#{personBean.person.fname}" required="true" />
+                                <p:inputText id="fname" value="#{personBean.person.fname}" required="true">
+                                    <p:ajax update="msgfname" event="keyup" />
+                                </p:inputText>
+                                <p:message for="fname" id="msgfname" display="block" />
                             </div>
 
                             <div class="field">
                                 <p:outputLabel for="lname">Last Name:</p:outputLabel>
-                                <p:inputText id="lname" value="#{personBean.person.lname}" required="true" />
+                                <p:inputText id="lname" value="#{personBean.person.lname}" required="true">
+                                    <p:ajax update="msglname" event="keyup" />
+                                </p:inputText>
+                                <p:message for="lname" id="msglname" display="block" />
                             </div>
 
                             <div class="field">
                                 <p:outputLabel for="sex">Sex:</p:outputLabel>
                                 <p:selectOneRadio id="sex" value="#{personBean.person.sex}"
-                                                  layout="responsive" columns="2">
+                                                  layout="responsive" columns="2" required="true">
                                     <f:selectItem itemLabel="Male" itemValue="Male" />
                                     <f:selectItem itemLabel="Female" itemValue="Female" />
+                                    <p:ajax update="msgsex" event="keyup" />
                                 </p:selectOneRadio>
+                                <p:message for="sex" id="msgsex" display="block" />
                             </div>
 
                             <div class="field">
                                 <p:outputLabel for="city">City:</p:outputLabel>
-                                <p:inputText id="city" value="#{personBean.person.city}" required="true" />
+                                <p:inputText id="city" value="#{personBean.person.city}" required="true" >
+                                    <p:ajax update="msgcity" event="keyup" />
+                                </p:inputText>
+                                <p:message for="city" id="msgcity" display="block" />
                             </div>
 
                             <div class="field">
                                 <p:outputLabel for="email">E-mail:</p:outputLabel>
                                 <p:inputText id="email" value="#{personBean.person.email}" required="true">
                                     <f:validateRegex pattern=".*@.*\..*"/>
+                                    <p:ajax update="msgemail" event="keyup" />
                                 </p:inputText>
+                                <p:message for="email" id="msgemail" display="block" />
                             </div>
 
                             <div class="field">
                                 <p:outputLabel for="tel">Telephone:</p:outputLabel>
                                 <p:inputText id="tel" value="#{personBean.person.tel}" required="true">
                                     <f:validateRegex pattern="^[0-9]{9}$"/>
+                                    <p:ajax update="msgtel" event="keyup" />
                                 </p:inputText>
+                                <p:message for="tel" id="msgtel" display="block" />
                             </div>
+
                         </p:outputPanel>
                     </p:outputPanel>
 
+                    <!--Footer dialogu-->
                     <f:facet name="footer">
+                        <!--Przycisk zapisania osoby-->
                         <p:commandButton value="Save" icon="pi pi-check" actionListener="#{personBean.savePerson}"
-                                         update=":form:dt-persons" process="manage-person-content @this" onclick="PF('managePersonDialog').hide()"/>
+                                         update=":form:dt-persons msgfname msglname msgsex msgcity msgemail msgtel"
+                                         process="manage-person-content @this"/>
+
+                        <!--Przycisk anulowania-->
                         <p:commandButton value="Cancel" icon="pi pi-times" onclick="PF('managePersonDialog').hide()"
                                          class="ui-button-secondary" type="button" />
                     </f:facet>
                 </p:dialog>
 
+                <!--Dialog ostrzegający przed usunięciem osoby-->
                 <p:confirmDialog widgetVar="deletePersonDialog" showEffect="fade" width="300"
                                  message="Delete the person?" header="Confirm" severity="warn">
                     <p:commandButton value="Yes" icon="pi pi-check" actionListener="#{personBean.deletePerson}"
@@ -149,14 +230,16 @@
                                      onclick="PF('deletePersonDialog').hide()" />
                 </p:confirmDialog>
 
+                <!--Globalny confirm Dialog-->
                 <p:confirmDialog global="true" showEffect="fade" width="300">
                     <p:commandButton value="Yes" type="button" styleClass="ui-confirmdialog-yes" icon="pi pi-check" />
                     <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no ui-button-secondary"
                                      icon="pi pi-times" />
                 </p:confirmDialog>
 
+                <!--Dialog Wyświetlenia osoby-->
                 <p:dialog header="Person Info" widgetVar="personDialog" modal="true" showEffect="fade"
-                          hideEffect="fade" resizable="false">
+                          hideEffect="fade">
                     <p:outputPanel id="personDetail" style="text-align:center;">
                         <p:panelGrid columns="2" layout="grid" rendered="#{not empty personBean.person}">
                             <h:outputText value="Name:"/>

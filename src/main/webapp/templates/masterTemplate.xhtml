@@ -8,15 +8,14 @@
 
 <f:view contentType="text/html;charset=UTF-8" encoding="UTF-8">
     <h:head>
-        <title>#{msg.AppTitle}</title>
-        <link rel="stylesheet" type="text/css" href="style.css"/>
+        <title>PrimeFaces Examples Showcase - Seminaria ZTI 2023</title>
     </h:head>
     <h:body>
-        <p:panel header="#{msg.AppTitle}">
+        <p:panel header="PrimeFaces Examples Showcase - Seminaria ZTI 2023">
             <!-- Menu -->
             <p:menubar>
-                <p:menuitem value="Item 1" url="#"/>
-                <p:menuitem value="Item 2" url="#"/>
+                <p:menuitem value="Person Table" url="personTable.jsf"/>
+                <p:menuitem value="Charts" url="chart.jsf"/>
                 <p:menuitem value="Item 3" url="#"/>
             </p:menubar>
 
@@ -28,7 +27,7 @@
             </div>
 
             <!-- Footer -->
-            <p:panel footer="#{msg.footerCRUDappl}" />
+            <p:panel footer="PrimeFaces Examples Showcase - Seminaria ZTI 2023" />
         </p:panel>
     </h:body>
 </f:view>
