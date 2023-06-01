@@ -1,0 +1,82 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+<head>
+    <title>IGNORED</title>
+</head>
+<body>
+
+<ui:composition template="/templates/masterTemplate.xhtml">
+    <ui:define name="content">
+        <style>
+            .panels .ui-panel {
+                margin: 15px;
+                width: 300px;
+            }
+        </style>
+
+
+        <div class="panels">
+            <p:panel id="pnl" header="Draggable Panel">
+                <h:outputText value="A regular p:panel."/>
+            </p:panel>
+            <p:draggable for="pnl"/>
+
+            <p:panel id="handlepnl" header="Handle">
+                <h:outputText value="Can only be dragged with my header."/>
+            </p:panel>
+            <p:draggable for="handlepnl" handle=".ui-panel-titlebar"/>
+
+            <p:panel id="hpnl" header="Horizontal Only">
+                <h:outputText value="Can only be dragged horizontally."/>
+            </p:panel>
+            <p:draggable for="hpnl" axis="x"/>
+
+            <p:panel id="vpnl" header="Vertical Only">
+                <h:outputText value="Can only be dragged vertically"/>
+            </p:panel>
+            <p:draggable for="vpnl" axis="y"/>
+
+            <p:panel id="rpnl" header="Revert">
+                <h:outputText value="Will be reverted back to my original position"/>
+            </p:panel>
+            <p:draggable for="rpnl" revert="true"/>
+
+            <p:panel id="opnl" header="Opacity">
+                <h:outputText value="Opacity is lower when I'm being dragged"/>
+            </p:panel>
+            <p:draggable for="opnl" opacity="0.3"/>
+
+            <p:panel id="gpnl" header="Grid">
+                <h:outputText value="Dragged in grid mode"/>
+            </p:panel>
+            <p:draggable for="gpnl" grid="20,40"/>
+
+            <p:outputPanel id="restrictPanel" layout="block"
+                           style="width:400px;height:200px;border:1px solid var(--surface-d);margin-bottom:20px">
+                <p:panel id="conpnl" header="Restricted">
+                    <h:outputText value="Restricted to my parent's boundaries"/>
+                </p:panel>
+            </p:outputPanel>
+            <p:draggable for="conpnl" containment="parent"/>
+
+            <p:graphicImage id="pic" url="images/witcher1.jpg"/>
+            <p:draggable for="pic"/>
+        </div>
+        <f:facet name="footer">
+            <a href="http://www.primefaces.org:8080/showcase/ui/dnd/draggable.xhtml">Source</a><br/>
+        </f:facet>
+    </ui:define>
+</ui:composition>
+
+</body>
+</html>
+
+
+
+
+

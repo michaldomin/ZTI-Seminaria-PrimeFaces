@@ -1,0 +1,60 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+<head>
+    <title>IGNORED</title>
+</head>
+<body>
+
+<ui:composition template="/templates/masterTemplate.xhtml">
+    <ui:define name="content">
+        <style>
+            .ui-diagram-element {
+                border: 0.1em dotted #E5E4E2;
+                background-color: #EFEEEC;
+                width: 10em;
+                height: 8em;
+                text-align: center;
+                box-shadow: 0 5px 10px rgba(0, 0, 0, 0.8);
+                user-select: none;
+            }
+
+            .ui-diagram-element:hover {
+                background-color: #C7C6C4;
+            }
+        </style>
+
+        <div class="card">
+            <h:form id="form">
+                <p:growl id="msgs" showDetail="true" skipDetailIfEqualsSummary="true"/>
+
+                <p:diagram value="#{diagramEditableView.model}" style="height:600px" styleClass="ui-widget-content"
+                           var="el">
+                    <f:facet name="element">
+                        <h:outputText value="#{el.name}" style="display:block;margin-top:1em;"/>
+                        <p:graphicImage url="images/#{el.image}" width="80" height="80" />
+                    </f:facet>
+                    <p:ajax event="connect" listener="#{diagramEditableView.onConnect}"/>
+                    <p:ajax event="disconnect" listener="#{diagramEditableView.onDisconnect}"/>
+                    <p:ajax event="connectionChange" listener="#{diagramEditableView.onConnectionChange}"/>
+                </p:diagram>
+            </h:form>
+        </div>
+
+        <f:facet name="footer">
+            <a href="http://www.primefaces.org:8080/showcase/ui/data/diagram/editable.xhtml">Source</a><br/>
+        </f:facet>
+    </ui:define>
+</ui:composition>
+
+</body>
+</html>
+
+
+
+
+
